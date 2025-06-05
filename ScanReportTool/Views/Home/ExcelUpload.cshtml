@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Upload Excel Files";
+}
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-info">
+        @ViewBag.Message
+    </div>
+}
+<h2>Upload Excel Files</h2>
+
+<form asp-action="UploadFiles" method="post" enctype="multipart/form-data">
+    <label>Select Excel Files:</label>
+    <input type="file" name="files" multiple />  <!-- Allow multiple file selection -->
+    <br /><br />
+    <button type="submit" class="btn btn-primary">Upload Files</button>
+</form>
+
+@* @if (ViewBag.Message != null)
+{
+    <div class="alert alert-info">@ViewBag.Message</div>
+} *@

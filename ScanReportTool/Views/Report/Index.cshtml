@@ -1,0 +1,96 @@
+﻿@model ReportPageViewModel
+@using System.Globalization
+@using System.Data
+
+<h3>Bank Report </h3>
+
+<form asp-action="Index" method="post" class="row g-3 align-items-center mb-3">
+    <div class="col-auto">
+        <label asp-for="Filter.SelectedBank" class="form-label">Bank</label>
+        <select asp-for="Filter.SelectedBank" asp-items="@(new SelectList(Model.Filter.BankList))" class="form-select" required>
+            <option value="">-- Select Bank --</option>
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label asp-for="Filter.SelectedMonth" class="form-label">Month</label>
+        <select asp-for="Filter.SelectedMonth" class="form-select" required>
+            <option value="">-- Select Month --</option>
+            @for (int m = 1; m <= 12; m++)
+            {
+                <option value="@m" selected="@(m == Model.Filter.SelectedMonth ? "selected" : null)">
+                    @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label asp-for="Filter.SelectedYear" class="form-label">Year</label>
+        <select asp-for="Filter.SelectedYear" asp-items="@(new SelectList(Model.Filter.YearList))" class="form-select" required>
+            <option value="">-- Select Year --</option>
+        </select>
+    </div>
+
+
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary no-print">View Report</button>
+        <button type="button" class="btn btn-primary no-print" onclick="window.print()">Print</button>
+    </div>
+
+</form>
+
+@if (Model.ReportData != null)
+{
+    <h4>Summary Report</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                @foreach (DataColumn col in Model.ReportData.SummaryTable.Columns)
+                {
+                    <th>@col.ColumnName</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DataRow row in Model.ReportData.SummaryTable.Rows)
+            {
+                <tr>
+                    @foreach (var item in row.ItemArray)
+                    {
+                        <td>@item</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @for (int i = 0; i < Model.ReportData.WeeklyTables.Count; i++)
+    {
+        var weekTable = Model.ReportData.WeeklyTables[i];
+        if (weekTable.Rows.Count == 0) continue;
+        <div class="print-break"></div>
+        <h4>Week @(i + 1) Report</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    @foreach (DataColumn col in weekTable.Columns)
+                    {
+                        <th>@col.ColumnName</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (DataRow row in weekTable.Rows)
+                {
+                    <tr>
+                        @foreach (var item in row.ItemArray)
+                        {
+                            <td>@item</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
